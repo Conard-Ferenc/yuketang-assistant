@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨课堂考试答案获取
 // @namespace    https://github.com/Conard-Ferenc
-// @version      0.3
+// @version      0.4
 // @description  完全加载页面3秒后，获取雨课堂考试答案
 // @author       Conard
 // @match        https://changjiang.yuketang.cn/v2/web/studentQuiz/*
@@ -19,9 +19,22 @@
   const js = document.createElement('script');
   js.innerHTML = `class Move{clickstatus = false;lastX = 0;lastY = 0;lastcX = 0;lastcY = 0;moveObject = undefined;mousedown(e){const target = e.target.className;if(target.includes("title")){this.clickstatus = true;this.moveObject = document.getElementById("tip");this.lastX = this.moveObject.offsetLeft;this.lastY = this.moveObject.offsetTop;this.lastcX = e.clientX;this.lastcY = e.clientY}}mousemove(e){if(this.clickstatus){this.moveObject.style.left = this.lastX+(e.clientX - this.lastcX)+"px";this.moveObject.style.top = this.lastY+(e.clientY - this.lastcY)+"px"}}mouseup(e){this.clickstatus = false;this.lastX = 0;this.lastY = 0;this.lastcX = 0;this.lastcY = 0}}const move = new Move();document.addEventListener("mousedown",move.mousedown);document.addEventListener("mousemove",move.mousemove);document.addEventListener("mouseup",move.mouseup);`
   document.head.appendChild(js);
+  // const replace = () => {
+  //     try {
+  //         console.log('test');
+  //         let show = document.getElementById('rainiframe').contentWindow.showAnswer;
+  //         if (show) show = "True";
+  //         console.log(show)
+  //     } catch(err) {
+  //         // console.log(err)
+  //         // setTimeout(replace, 0)
+  //         // replace
+  //     }
+  // }
+  // replace()
   const getans = () => {
     let quizObj = document.getElementById('rainiframe').contentWindow.quizData;
-    const ans = quizObj.Slides.map((item) => {
+    const ans = quizObj.Slides.filter((item) => item.Problem).map((item) => {
       let outAns = item.Problem.Answer;
       if (outAns) return outAns;
       try {
