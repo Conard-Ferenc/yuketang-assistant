@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         雨课堂助手
 // @namespace    https://github.com/Conard-Ferenc
-// @version      1.0
+// @version      1.1
 // @description  完全加载页面3秒后，获取雨课堂考试答案
 // @author       Conard
-// @match        https://changjiang.yuketang.cn/v2/web/studentQuiz/*
+// @match        https://changjiang.yuketang.cn/v2/web/*
 // @icon         https://changjiang.yuketang.cn/static/images/favicon.ico
 // @license      MIT
 // ==/UserScript==
@@ -63,8 +63,7 @@
     });
   };
   const autoCWare = () => {
-    content.innerHTML = `<input id="sec-value" type="number" max="40" min="5" value="5" ><button id="run-button">开始挂机</button>`;
-
+    content.innerHTML = `<input id="sec-value" type="number" max="40" min="5" value="5" /><button id="run-button">开始挂机</button>`;
     let seconds = document.querySelector("#sec-value").value * 1 || 5;
     document.querySelector("button#run-button").addEventListener("click", (e) => {
       console.log(e);
