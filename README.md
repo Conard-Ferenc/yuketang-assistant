@@ -4,12 +4,14 @@
 
 ## 📦 Install
 
- - Open this URL [https://greasyfork.org/zh-CN/scripts/441863](https://greasyfork.org/zh-CN/scripts/441863)
+- Open this URL [https://greasyfork.org/zh-CN/scripts/441863](https://greasyfork.org/zh-CN/scripts/441863)
 
 ## 🦄 Usage
 
 - 确保脚本开启
 - 打开雨课堂试卷页面即可获取部分答案（答案仅供参考）
+- 打开雨课堂课件页面即可实现便捷挂机（课件跳转暂未实现）
+- 打开雨课堂课堂页面即可定时发送弹幕
 
 ## 📃 免责声明
 
