@@ -45,10 +45,10 @@
     let [, key, id] = path.split("/");
     console.log(path, key);
     if (location.href.includes("/lesson/fullscreen/v3/")) key = "studentLesson";
-    if (nowPlugin !== key && pluginMap[key]) {
-      nowPlugin = key;
-      return pluginMap[key](id);
-    } else if (nowPlugin === key) return;
+    if (nowPlugin === key) return;
+    else if (nowPlugin !== key) nowPlugin = key;
+    if (pluginMap[nowPlugin]) return pluginMap[nowPlugin](id);
+    nowPlugin = null;
     return setTip(true);
   });
   const setTip = (hidden) => (hidden ? tip.classList.add("tiphidden") : (tip.classList.remove("tiphidden"), (content.innerHTML = "")));
