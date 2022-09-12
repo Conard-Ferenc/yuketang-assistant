@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         雨课堂助手
-// @namespace    https://github.com/Conard-Ferenc
-// @version      1.3
-// @description  完全加载页面3秒后，获取雨课堂考试答案
+// @namespace    https://github.com/Conard-Ferenc/yuketang-assistant
+// @version      1.3.1
+// @description  完全加载页面3秒后，获取雨课堂试卷答案
 // @author       Conard
 // @match        https://changjiang.yuketang.cn/*
 // @icon         https://changjiang.yuketang.cn/static/images/favicon.ico
 // @license      MIT
+// @noframes
 // ==/UserScript==
 
 (function () {
