@@ -16,7 +16,7 @@
   js.innerHTML = `class Move{clickstatus = false;lastX = 0;lastY = 0;lastcX = 0;lastcY = 0;moveObject = undefined;mousedown(e){const target = e.target.className;if(target.includes("title")){this.clickstatus = true;this.moveObject = document.getElementById("tip");this.lastX = this.moveObject.offsetLeft;this.lastY = this.moveObject.offsetTop;this.lastcX = e.clientX;this.lastcY = e.clientY}}mousemove(e){if(this.clickstatus){this.moveObject.style.left = this.lastX+(e.clientX - this.lastcX)+"px";this.moveObject.style.top = this.lastY+(e.clientY - this.lastcY)+"px"}}mouseup(e){this.clickstatus = false;this.lastX = 0;this.lastY = 0;this.lastcX = 0;this.lastcY = 0}}const move = new Move();document.addEventListener("mousedown",move.mousedown);document.addEventListener("mousemove",move.mousemove);document.addEventListener("mouseup",move.mouseup);`;
   document.head.appendChild(js);
   const style = document.createElement("style");
-  style.innerHTML = `.tip{z-index:2001;min-width:150px;max-width:300px;min-height:200px;max-height:70vh;position:absolute;top:100px;left:200px;background-color:aqua;-webkit-box-shadow:1px 1px 3px #292929;-moz-box-shadow:1px 1px 3px #292929;box-shadow:1px 1px 3px #292929;border-radius:10px;overflow:overlay;}.tiphidden{display:none}.tip>.title{display:block;height:30px;background-color:cornflowerblue;color:#fff;text-align:center;user-select:none;line-height:30px;cursor:grab;position:sticky;top:0;}.tip>.content{padding:4px}.title:active{cursor:grabbing!important}`;
+  style.innerHTML = `#tip.tip{z-index:20001;min-width:150px;max-width:300px;min-height:200px;max-height:70vh;position:absolute;top:100px;left:200px;background-color:aqua;-webkit-box-shadow:1px 1px 3px #292929;-moz-box-shadow:1px 1px 3px #292929;box-shadow:1px 1px 3px #292929;border-radius:10px;overflow:overlay;}.tiphidden{display:none;}.tip>.title{display:block;height:30px;background-color:cornflowerblue;color:#fff;text-align:center;user-select:none;line-height:30px;cursor:grab;position:sticky;top:0;}.tip>.title:active{cursor:grabbing!important;}.tip>.content{padding:4px;padding-left:25px;}.tip>.content ol{list-style-type:decimal;}.tip>.content code{font-weight:bold;}`;
   document.head.appendChild(style);
   const tip = document.createElement("div");
   tip.classList.add("tip", "tiphidden");
@@ -52,6 +52,18 @@
     return setTip(true);
   });
   const setTip = (hidden) => (hidden ? tip.classList.add("tiphidden") : (tip.classList.remove("tiphidden"), (content.innerHTML = "")));
+  const autoSelect = () => {
+    const selection = window.getSelection();
+    const codeList = content.querySelectorAll('code');
+    codeList.forEach(code => {
+      code.addEventListener('dblclick', e => {
+        selection.removeAllRanges();
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        selection.addRange(range);
+      });
+    })
+  }
   const getAns = () => {
     let quizObj = document.getElementById("rainiframe").contentWindow.quizData;
     const ans = quizObj.Slides.filter((item) => item.Problem).map((item) => {
@@ -59,29 +71,34 @@
       if (outAns) return outAns;
       try {
         const ansList = item.Problem.Blanks.map((citem) => {
-          return citem.Answers.join("或");
+          return citem.Answers.join("</code>或<code>");
         });
-        return ansList.join("，");
+        return ansList.join("</code>，<code>");
       } catch (err) {
         return "老师未设置答案或题型暂不支持";
       }
     });
     console.log(ans);
-    ans.forEach((item, index) => {
-      content.innerHTML += `${index + 1}.&nbsp;${item}<br/>`;
+    let ansStr = "<ol>";
+    ans.forEach(item => {
+      ansStr += `<li><code>${item}</code></li>`;
     });
+    content.innerHTML += ansStr + "</ol>"
+    autoSelect();
   };
   const autoCWare = () => {
-    content.innerHTML = `<input id="sec-value" type="number" max="40" min="5" value="5" />sec <button id="run-button">开始挂机</button>`;
+    let time;
+    content.innerHTML = `<input id="sec-value" type="number" max="40" min="10" value="10" />sec <button id="run-button">开始挂机</button>`;
     document.querySelector("button#run-button").addEventListener("click", (e) => {
-      let seconds = document.querySelector("#sec-value").value * 1 || 5;
+      clearInterval(time);
+      let seconds = document.querySelector("#sec-value").value * 1 || 10;
       console.log(e);
       const list = document.querySelectorAll(".thumbImg-container");
       const deep = list.length;
       let index = 0;
-      let time = setInterval(() => {
-        if (index >= deep) return clearInterval(time);
-        list[index++].click();
+      time = setInterval(() => {
+        if (index + 1 >= deep) return clearInterval(time);
+        list[++index].click();
       }, seconds * 1000);
     });
   };
