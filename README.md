@@ -2,11 +2,11 @@
 
 <p align="center">Help using the yuketang easier</p>
 
-## 📦 Install
+## 📦 安装
 
 - Open this URL [https://greasyfork.org/zh-CN/scripts/441863](https://greasyfork.org/zh-CN/scripts/441863)
 
-## 🦄 Usage
+## 🦄 使用
 
 - 确保脚本开启
 - 打开雨课堂试卷页面即可获取部分答案（答案仅供参考）
@@ -21,6 +21,6 @@
 
 欢迎各位同学通过 PR 或者 ISSUES 的方式直接参与到项目中来，请注意反馈 BUG 需提供完整日志！
 
-## 📄 License
+## 📄 许可协议
 
 [MIT License](https://github.com/Conard-Ferenc/yuketang-assist/blob/main/LICENSE) © 2022-PRESENT [Conard](https://github.com/Conard-Ferenc)
