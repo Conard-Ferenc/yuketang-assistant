@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨课堂助手
 // @namespace    https://github.com/Conard-Ferenc/yuketang-assistant
-// @version      1.3.3
+// @version      1.4.0
 // @description  完全加载页面3秒后，获取雨课堂试卷答案
 // @author       Conard
 // @match        https://changjiang.yuketang.cn/*
@@ -87,20 +87,53 @@
     autoSelect();
   };
   const autoCWare = () => {
-    let time;
-    content.innerHTML = `<input id="sec-value" type="number" max="40" min="10" value="10" />sec <button id="run-button">开始挂机</button>`;
+    let timer;
+    content.innerHTML = `<div>课件挂机:<input id="sec-value" type="number" max="40" min="5" value="5" />s <button id="run-button">开始挂机</button></div><div>视频挂机:<button id="video-button">视频挂机</button></div>`;
     document.querySelector("button#run-button").addEventListener("click", (e) => {
-      clearInterval(time);
-      let seconds = document.querySelector("#sec-value").value * 1 || 10;
+      const seconds = document.querySelector("#sec-value").value * 1 || 5;
       console.log(e);
-      const list = document.querySelectorAll(".thumbImg-container");
-      const deep = list.length;
-      let index = 0;
-      time = setInterval(() => {
-        if (index + 1 >= deep) return clearInterval(time);
-        list[++index].click();
-      }, seconds * 1000);
+      const key = e.target.textContent;
+      const eventMap = {
+        开始挂机: () => {
+          e.target.textContent = "暂停挂机";
+          const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.querySelector('.flag.noRead'));
+          const deep = list.length;
+          let index = 0;
+          timer = setInterval(() => {
+            if (index + 1 >= deep) return clearInterval(timer);
+            list[++index].click();
+          }, seconds * 1000);
+        },
+        暂停挂机: () => {
+          console.log("暂停");
+          e.target.textContent = "开始挂机";
+          clearInterval(timer);
+        }
+      }
+      eventMap[key]?.();
     });
+    document.querySelector("button#video-button").addEventListener("click", (e) => {
+      const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.querySelector('.flag.noRead'));
+      // const list = [...document.querySelectorAll('.video-box.box-center')].filter((i) => !i.querySelector('i'));
+
+      const play = (index = 0) => {
+        if (index >= list.length) return;
+        list[index]?.click();
+        const videoTrigger = document.querySelector('.swiper-slide-active .video-box.box-center');
+        if (!videoTrigger || videoTrigger.querySelector('i')) return play(index + 1);
+        videoTrigger.click();
+        setTimeout(() => {
+          // document.querySelector('.xt_video_player_speed .xt_video_player_common_list li').click();
+          document.querySelector('video').addEventListener("ended", () => {
+            console.log("ended");
+            play(index + 1);
+          }, { once: true })
+
+        }, 500)
+      }
+      play(0);
+      console.log(list);
+    })
   };
   const autoBulletChat = (lessonId) => {
     console.log(lessonId);
