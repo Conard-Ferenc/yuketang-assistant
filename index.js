@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨课堂助手
 // @namespace    https://github.com/Conard-Ferenc/yuketang-assistant
-// @version      1.4.3
+// @version      1.4.4
 // @description  完全加载页面3秒后，获取雨课堂试卷答案
 // @author       Conard
 // @match        https://changjiang.yuketang.cn/*
@@ -89,6 +89,13 @@
     autoSelect();
   };
   const autoCWare = () => {
+    const removeEventListener = () => {
+      try {
+        document.removeEventListener('visibilitychange', document.querySelector('.basePPT__component').__vue__.handleVisibilityChange);
+      } catch {
+        console.log('dom is never');
+      }
+    }
     let timer;
     content.innerHTML = `<div>课件挂机:<input id="sec-value" type="number" max="40" min="5" value="5" />s <button id="run-button">开始挂机</button></div><div>视频挂机:<button id="video-button">视频挂机</button></div>`;
     document.querySelector("button#run-button").addEventListener("click", (e) => {
@@ -97,6 +104,7 @@
       const key = e.target.textContent;
       const eventMap = {
         开始挂机: () => {
+          removeEventListener();
           e.target.textContent = "暂停挂机";
           const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith('noRead'));
           const deep = list.length;
@@ -115,6 +123,7 @@
       eventMap[key]?.();
     });
     document.querySelector("button#video-button").addEventListener("click", (e) => {
+      removeEventListener();
       const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith('noRead'));
       // const list = [...document.querySelectorAll('.video-box.box-center')].filter((i) => !i.querySelector('i'));
 
