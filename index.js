@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨课堂助手
 // @namespace    https://github.com/Conard-Ferenc/yuketang-assistant
-// @version      1.4.2
+// @version      1.4.3
 // @description  完全加载页面3秒后，获取雨课堂试卷答案
 // @author       Conard
 // @match        https://changjiang.yuketang.cn/*
@@ -9,7 +9,7 @@
 // @license      MIT
 // @noframes
 // @downloadURL https://update.greasyfork.org/scripts/441863/雨课堂助手.user.js
-// @updateURL https://update.greasyfork.org/scripts/441863/雨课堂助手.meta.js
+// @updateURL https://update.greasyfork.org/scripts/441863/雨课堂助手.user.js
 // ==/UserScript==
 
 (function () {
