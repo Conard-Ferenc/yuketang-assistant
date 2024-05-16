@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨课堂助手
 // @namespace    https://github.com/Conard-Ferenc/yuketang-assistant
-// @version      1.4.4
+// @version      1.4.5
 // @description  完全加载页面3秒后，获取雨课堂试卷答案
 // @author       Conard
 // @match        https://changjiang.yuketang.cn/*
@@ -18,7 +18,7 @@
   js.innerHTML = `class Move{clickstatus = false;lastX = 0;lastY = 0;lastcX = 0;lastcY = 0;moveObject = undefined;mousedown(e){const target = e.target.className;if(target.includes("title")){this.clickstatus = true;this.moveObject = document.getElementById("tip");this.lastX = this.moveObject.offsetLeft;this.lastY = this.moveObject.offsetTop;this.lastcX = e.clientX;this.lastcY = e.clientY}}mousemove(e){if(this.clickstatus){this.moveObject.style.left = this.lastX+(e.clientX - this.lastcX)+"px";this.moveObject.style.top = this.lastY+(e.clientY - this.lastcY)+"px"}}mouseup(e){this.clickstatus = false;this.lastX = 0;this.lastY = 0;this.lastcX = 0;this.lastcY = 0}}const move = new Move();document.addEventListener("mousedown",move.mousedown);document.addEventListener("mousemove",move.mousemove);document.addEventListener("mouseup",move.mouseup);`;
   document.head.appendChild(js);
   const style = document.createElement("style");
-  style.innerHTML = `#tip.tip{z-index:20001;min-width:150px;max-width:300px;min-height:200px;max-height:70vh;position:absolute;top:100px;left:200px;background-color:aqua;-webkit-box-shadow:1px 1px 3px #292929;-moz-box-shadow:1px 1px 3px #292929;box-shadow:1px 1px 3px #292929;border-radius:10px;overflow:overlay;}.tiphidden{display:none;}.tip>.title{display:block;height:30px;background-color:cornflowerblue;color:#fff;text-align:center;user-select:none;line-height:30px;cursor:grab;position:sticky;top:0;}.tip>.title:active{cursor:grabbing!important;}.tip>.content{padding:4px;padding-left:25px;}.tip>.content ol{list-style-type:decimal;}.tip>.content code{font-weight:bold;}`;
+  style.innerHTML = `#tip.tip{z-index:20001;min-width:150px;max-width:300px;min-height:200px;max-height:70vh;position:absolute;top:100px;left:200px;background-color:aqua;-webkit-box-shadow:1px 1px 3px #292929;-moz-box-shadow:1px 1px 3px #292929;box-shadow:1px 1px 3px #292929;border-radius:10px;overflow:overlay;}.tiphidden{display:none;}.tip>.title{display:block;height:30px;background-color:cornflowerblue;color:#fff;text-align:center;user-select:none;line-height:30px;cursor:grab;position:sticky;top:0;}.tip>.title:active{cursor:grabbing!important;}.tip>.content{padding:4px;padding-left:25px;}.tip>.content ol{list-style-type:decimal;}.tip>.content code{font-weight:bold;}.tip>.content code>img{max-width:100%;vertical-align:top;}`;
   document.head.appendChild(style);
   const tip = document.createElement("div");
   tip.classList.add("tip", "tiphidden");
@@ -56,9 +56,9 @@
   const setTip = (hidden) => (hidden ? tip.classList.add("tiphidden") : (tip.classList.remove("tiphidden"), (content.innerHTML = "")));
   const autoSelect = () => {
     const selection = window.getSelection();
-    const codeList = content.querySelectorAll('code');
+    const codeList = content.querySelectorAll("code");
     codeList.forEach(code => {
-      code.addEventListener('dblclick', e => {
+      code.addEventListener("dblclick", e => {
         selection.removeAllRanges();
         const range = document.createRange();
         range.selectNodeContents(code);
@@ -68,17 +68,22 @@
   }
   const getAns = () => {
     let quizObj = document.getElementById("rainiframe").contentWindow.quizData;
+    console.log(quizObj);
     const ans = quizObj.Slides.filter((item) => item.Problem).map((item) => {
       let outAns = item.Problem.Answer;
       if (outAns) return outAns;
-      try {
+      if (item.Problem.Blanks) {
         const ansList = item.Problem.Blanks.map((citem) => {
           return citem.Answers.join("</code>或<code>");
         });
         return ansList.join("</code>，<code>");
-      } catch (err) {
-        return "老师未设置答案或题型暂不支持";
       }
+      if (item.Problem.RemarkRich) {
+        const imgList = item.Problem.RemarkRich.Shapes.filter(({ Type, URL }) => URL || Object.is("msoPicture", Type)).map(({ URL }) => `<img src="${URL}" />`);
+        if (!imgList.length) return "老师未设置答案或题型暂不支持";
+        return imgList.join("");
+      }
+      return "老师未设置答案或题型暂不支持";
     });
     console.log(ans);
     let ansStr = "<ol>";
@@ -91,9 +96,9 @@
   const autoCWare = () => {
     const removeEventListener = () => {
       try {
-        document.removeEventListener('visibilitychange', document.querySelector('.basePPT__component').__vue__.handleVisibilityChange);
+        document.removeEventListener("visibilitychange", document.querySelector(".basePPT__component").__vue__.handleVisibilityChange);
       } catch {
-        console.log('dom is never');
+        console.log("dom is never");
       }
     }
     let timer;
@@ -106,7 +111,7 @@
         开始挂机: () => {
           removeEventListener();
           e.target.textContent = "暂停挂机";
-          const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith('noRead'));
+          const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith("noRead"));
           const deep = list.length;
           let index = 0;
           timer = setInterval(() => {
@@ -124,18 +129,18 @@
     });
     document.querySelector("button#video-button").addEventListener("click", (e) => {
       removeEventListener();
-      const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith('noRead'));
-      // const list = [...document.querySelectorAll('.video-box.box-center')].filter((i) => !i.querySelector('i'));
+      const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith("noRead"));
+      // const list = [...document.querySelectorAll(".video-box.box-center")].filter((i) => !i.querySelector("i"));
 
       const play = (index = 0) => {
         if (index >= list.length) return;
         list[index]?.click();
-        const videoTrigger = document.querySelector('.swiper-slide-active .video-box.box-center');
-        if (!videoTrigger || videoTrigger.querySelector('i')) return play(index + 1);
+        const videoTrigger = document.querySelector(".swiper-slide-active .video-box.box-center");
+        if (!videoTrigger || videoTrigger.querySelector("i")) return play(index + 1);
         videoTrigger.click();
         setTimeout(() => {
-          // document.querySelector('.xt_video_player_speed .xt_video_player_common_list li').click();
-          document.querySelector('video').addEventListener("ended", () => {
+          // document.querySelector(".xt_video_player_speed .xt_video_player_common_list li").click();
+          document.querySelector("video").addEventListener("ended", () => {
             console.log("ended");
             play(index + 1);
           }, { once: true })
