@@ -8,6 +8,8 @@
 // @icon         https://changjiang.yuketang.cn/static/images/favicon.ico
 // @license      MIT
 // @noframes
+// @downloadURL https://update.greasyfork.org/scripts/441863/雨课堂助手.user.js
+// @updateURL https://update.greasyfork.org/scripts/441863/雨课堂助手.meta.js
 // ==/UserScript==
 
 (function () {
@@ -96,7 +98,7 @@
       const eventMap = {
         开始挂机: () => {
           e.target.textContent = "暂停挂机";
-          const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.querySelector('.flag.noRead'));
+          const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith('noRead'));
           const deep = list.length;
           let index = 0;
           timer = setInterval(() => {
@@ -113,7 +115,7 @@
       eventMap[key]?.();
     });
     document.querySelector("button#video-button").addEventListener("click", (e) => {
-      const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.querySelector('.flag.noRead'));
+      const list = [...document.querySelectorAll(".thumbImg-container")].filter((i) => i.nextElementSibling.className.endsWith('noRead'));
       // const list = [...document.querySelectorAll('.video-box.box-center')].filter((i) => !i.querySelector('i'));
 
       const play = (index = 0) => {
